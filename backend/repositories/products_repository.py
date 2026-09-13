@@ -84,3 +84,82 @@ def add_product_repo(code, name, description, qty, price):
 
     finally:
         if conn: conn.close()
+
+def update_product_repo(code, name, description, qty, price, id):
+    conn = None
+
+    try:
+        conn = get_connection()
+
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id FROM tblProducts WHERE id = %s
+                """,
+                (id,)
+            )
+            if cursor.fetchone() is None:
+                return False
+
+            cursor.execute(
+                """
+                UPDATE tblProducts
+                SET
+                    code        = %s, 
+                    name        = %s, 
+                    description = %s, 
+                    qty         = %s, 
+                    price       = %s
+                WHERE id        = %s
+                """,
+                (
+                    code,
+                    name,
+                    description,
+                    qty,
+                    price, 
+                    id
+                )
+            )
+            conn.commit()
+
+            return True
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"Error: {e}")
+
+    finally:
+        if conn: conn.close()
+
+
+def delete_product_repo(id):
+    conn = None
+
+    try:
+        conn = get_connection()
+
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id FROM tblProducts WHERE id = %s
+                """,
+                (id,)
+            )
+            if cursor.fetchone() is None:
+                return False
+
+            cursor.execute(
+                """
+                DELETE FROM tblProducts WHERE id = %s
+                """,
+                (id,)
+            )
+            conn.commit()
+            return True
+        
+    except Exception as e:
+        if conn: conn.rollback()
+        print(f"Error: {e}")
+
+    finally:
+        if conn: conn.close()
