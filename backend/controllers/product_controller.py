@@ -1,5 +1,6 @@
-from backend.utils.api_response import success, error
+from flask import request
 
+from backend.utils.api_response import success, error
 from backend.services.product_services import (
     get_products_service,
     get_by_id_service,
@@ -25,7 +26,15 @@ def get_by_id_control(id):
     return success("Get successfully.", 404, product)
 
 def add_product_control():
-    result = add_product_service()
+    product = request.get_json()
+
+    result = add_product_service(
+        product.get("code"),
+        product.get("name"),
+        product.get("description"),
+        product.get("qty"),
+        product.get("price")
+    )
 
     if result is None:
         return error("Unable to add product.", 400)
@@ -33,7 +42,16 @@ def add_product_control():
     return success("Added successfully.", 201)
     
 def update_product_control(id): 
-    result = update_product_service(id)
+    product = request.get_json()
+
+    result = update_product_service(
+        product.get("code"),
+        product.get("name"),
+        product.get("description"),
+        product.get("qty"),
+        product.get("price"),
+        id
+    )
 
     if result is None:
         return error("Unable to update product.", 400)
