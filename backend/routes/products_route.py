@@ -26,8 +26,8 @@ def add_product():
 
 @products_bp.route("/products/<int:id>", methods=["PUT"])
 def update_product(id):
-    return update_product(id)
+    return update_product_control(id)
 
 @products_bp.route("/products/<int:id>", methods=["DELETE"])
 def delete_product(id):
-    return delete_product(id)
+    return delete_product_control(id)
