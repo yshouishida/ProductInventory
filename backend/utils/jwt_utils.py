@@ -1,7 +1,7 @@
 import jwt
 import uuid
 from datetime import datetime, timedelta, timezone
-from backend.utils.api_response import success, error
+from backend.utils.api_response import error
 from backend.config.settings import JWT_SECRET_KEY, JWT_TOKEN_EXPIRED
 from backend.utils.JWT_TOKEN_BLOCKLIST import JWT_TOKEN_BLOCKLIST
 from flask import request, g
@@ -45,4 +45,18 @@ def token_required(f):
 
         return f(*args, **kwargs)
     return decorated
+
+def role_required(role_required):
+    def decorator(f):
+        @wraps(f)
+
+        def decorated(*args, **kwargs):
+            user_role = g.user_role
+
+            if role_required.lower() != user_role:
+                return error("Access denied.", 401)
+
+            return f(*args, **kwargs)
+        return decorated
+    return decorator
             
