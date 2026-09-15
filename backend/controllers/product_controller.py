@@ -11,11 +11,7 @@ from backend.services.product_services import (
 
 def get_products_control():
     products = get_products_service()
-
-    if products is None:
-        return error("Products are not found.", 404)
-
-    return success("Get successfully", 200, products)
+    return success("Products retrieved successfully.", 200, products)
 
 def get_by_id_control(id):
     product = get_by_id_service(id)
@@ -23,10 +19,36 @@ def get_by_id_control(id):
     if product is None:
         return error("Product is not found.", 404)
 
-    return success("Get successfully.", 404, product)
+    return success("Product retrieved successfully.", 200, product)
+
+
+def _product_data():
+    product = request.get_json(silent=True)
+    if not isinstance(product, dict):
+        return None
+    if not isinstance(product.get("code"), str) or not product["code"].strip() or len(product["code"]) > 20:
+        return None
+    if not isinstance(product.get("name"), str) or not product["name"].strip() or len(product["name"]) > 100:
+        return None
+    if product.get("description") is not None and not isinstance(product["description"], str):
+        return None
+    qty = product.get("qty")
+    price = product.get("price")
+    if isinstance(qty, bool) or not isinstance(qty, int) or qty < 0:
+        return None
+    from decimal import Decimal, InvalidOperation
+    try:
+        amount = Decimal(str(price))
+    except (InvalidOperation, TypeError, ValueError):
+        return None
+    if isinstance(price, bool) or not amount.is_finite() or amount < 0 or amount > Decimal("99999999.99") or amount.as_tuple().exponent < -2:
+        return None
+    return product
 
 def add_product_control():
-    product = request.get_json()
+    product = _product_data()
+    if product is None:
+        return error("Invalid product. Provide code, name, nonnegative integer qty, and nonnegative price with at most two decimal places.", 400)
 
     result = add_product_service(
         product.get("code"),
@@ -36,13 +58,12 @@ def add_product_control():
         product.get("price")
     )
 
-    if result is None:
-        return error("Unable to add product.", 400)
-
     return success("Added successfully.", 201)
     
 def update_product_control(id): 
-    product = request.get_json()
+    product = _product_data()
+    if product is None:
+        return error("Invalid product. Provide code, name, nonnegative integer qty, and nonnegative price with at most two decimal places.", 400)
 
     result = update_product_service(
         product.get("code"),
@@ -53,15 +74,15 @@ def update_product_control(id):
         id
     )
 
-    if result is None:
-        return error("Unable to update product.", 400)
+    if not result:
+        return error("Product is not found.", 404)
 
     return success("Updated successfully.", 200)
 
 def delete_product_control(id): 
     result = delete_product_service(id)
 
-    if result is None:
-        return error("Unable to delete product.", 400)
+    if not result:
+        return error("Product is not found.", 404)
 
-    return success("Deleted sucessfully.", 200)
+    return success("Deleted successfully.", 200)

@@ -22,9 +22,6 @@ def get_products_repo():
             )
             return cursor.fetchall()
         
-    except Exception as e:
-        print(f"Error: {e}")
-
     finally:
         if conn: conn.close()
 
@@ -51,9 +48,6 @@ def get_by_id_repo(id):
             )
             return cursor.fetchone()
         
-    except Exception as e:
-        print(f"Error: {e}")
-
     finally:
         if conn: conn.close()
 
@@ -78,9 +72,9 @@ def add_product_repo(code, name, description, qty, price):
             conn.commit()
             return True
         
-    except Exception as e:
+    except Exception:
         if conn: conn.rollback()
-        print(f"Error: {e}")
+        raise
 
     finally:
         if conn: conn.close()
@@ -124,9 +118,9 @@ def update_product_repo(code, name, description, qty, price, id):
             conn.commit()
 
             return True
-    except Exception as e:
+    except Exception:
         if conn: conn.rollback()
-        print(f"Error: {e}")
+        raise
 
     finally:
         if conn: conn.close()
@@ -157,9 +151,9 @@ def delete_product_repo(id):
             conn.commit()
             return True
         
-    except Exception as e:
+    except Exception:
         if conn: conn.rollback()
-        print(f"Error: {e}")
+        raise
 
     finally:
         if conn: conn.close()

@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS dbstore;
 
 USE dbstore;
 
-CREATE TABLE tblProducts (
+CREATE TABLE IF NOT EXISTS tblProducts (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(20) NOT NULL,
     name VARCHAR(100) NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE tblProducts (
     price DECIMAL(10,2) NOT NULL
 );
 
-INSERT INTO products
+INSERT INTO tblProducts
 (code, name, description, qty, price)
 VALUES
 ('P001', 'Wireless Mouse', '2.4GHz Wireless Mouse', 25, 450.00),

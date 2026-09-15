@@ -18,7 +18,7 @@ def create_access_token(identity, role):
         "exp": datetime.now(timezone.utc) + timedelta(seconds=JWT_TOKEN_EXPIRED),
         "role": role
     }
-    token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=["HS256"])
+    token = jwt.encode(payload, JWT_SECRET_KEY, algorithm="HS256")
     return token
 
 def token_required(f):
@@ -26,9 +26,11 @@ def token_required(f):
 
     def decorated(*args, **kwargs):
         header = request.headers.get("Authorization")
-        if header.startswith("Bearer "):
+        if not header or not header.startswith("Bearer "):
             return error("Authorization is required.", 401)
-        token = header.split(" ")[1]
+        token = header.removeprefix("Bearer ").strip()
+        if not token:
+            return error("Authorization is required.", 401)
 
         try:
             payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
@@ -37,11 +39,13 @@ def token_required(f):
                 return error("Token has been revoked.", 401)
             g.jti = jti
             g.payload = payload
-            g.user_id = int(payload.get("sub"))
+            g.user_id = int(payload["sub"])
             g.user_role = payload.get("role")
             
         except jwt.ExpiredSignatureError:
             return error("Token has been expired. Please login again.", 401)
+        except (jwt.InvalidTokenError, KeyError, TypeError, ValueError):
+            return error("Invalid token.", 401)
 
         return f(*args, **kwargs)
     return decorated
@@ -51,10 +55,10 @@ def role_required(role_required):
         @wraps(f)
 
         def decorated(*args, **kwargs):
-            user_role = g.user_role
+            user_role = getattr(g, "user_role", None)
 
-            if role_required.lower() != user_role:
-                return error("Access denied.", 401)
+            if user_role is None or role_required.lower() != user_role.lower():
+                return error("Access denied.", 403)
 
             return f(*args, **kwargs)
         return decorated
