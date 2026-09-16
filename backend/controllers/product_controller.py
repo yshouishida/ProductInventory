@@ -1,4 +1,5 @@
 from flask import request
+from decimal import Decimal, InvalidOperation
 
 from backend.utils.api_response import success, error
 from backend.services.product_services import (
@@ -36,7 +37,6 @@ def _product_data():
     price = product.get("price")
     if isinstance(qty, bool) or not isinstance(qty, int) or qty < 0:
         return None
-    from decimal import Decimal, InvalidOperation
     try:
         amount = Decimal(str(price))
     except (InvalidOperation, TypeError, ValueError):
@@ -50,7 +50,7 @@ def add_product_control():
     if product is None:
         return error("Invalid product. Provide code, name, nonnegative integer qty, and nonnegative price with at most two decimal places.", 400)
 
-    result = add_product_service(
+    add_product_service(
         product.get("code"),
         product.get("name"),
         product.get("description"),

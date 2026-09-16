@@ -17,4 +17,6 @@ DB_CONFIG = {
 }
 
 def get_connection():
+    if not all(DB_CONFIG[key] for key in ("host", "database", "user")):
+        raise RuntimeError("DB_HOST, DB_NAME, and DB_USER must be set in backend/.env")
     return mysql.connect(**DB_CONFIG)

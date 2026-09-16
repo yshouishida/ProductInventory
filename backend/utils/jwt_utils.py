@@ -57,7 +57,7 @@ def role_required(role_required):
         def decorated(*args, **kwargs):
             user_role = getattr(g, "user_role", None)
 
-            if user_role is None or role_required.lower() != user_role.lower():
+            if not isinstance(user_role, str) or role_required.lower() != user_role.lower():
                 return error("Access denied.", 403)
 
             return f(*args, **kwargs)
