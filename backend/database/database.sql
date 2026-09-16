@@ -11,6 +11,13 @@ CREATE TABLE IF NOT EXISTS tblProducts (
     price DECIMAL(10,2) NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS tblUsers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL DEFAULT 'user'
+);
+
 INSERT INTO tblProducts
 (code, name, description, qty, price)
 VALUES

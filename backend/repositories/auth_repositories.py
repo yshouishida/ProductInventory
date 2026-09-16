@@ -1,7 +1,7 @@
 from backend.database.connection import get_connection
 
 def login_repo(username):
-    conn  = None
+    conn = None
 
     try:
         conn = get_connection()
@@ -12,7 +12,9 @@ def login_repo(username):
                 SELECT 
                     id,
                     username,
-                    password
+                    password,
+                    role
+                FROM tblUsers
                 WHERE username = %s
                 LIMIT 1
                 """,
@@ -20,8 +22,6 @@ def login_repo(username):
             )
             return cursor.fetchone()
         
-    except Exception as e:
-        print(f"Error: {e}")
-
     finally:
-        if conn: conn.close()
+        if conn:
+            conn.close()

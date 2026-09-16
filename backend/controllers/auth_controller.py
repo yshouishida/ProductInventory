@@ -4,20 +4,22 @@ from flask import request
 
 
 def login_control():
-    user_input = request.get_json()
+    user_input = request.get_json(silent=True)
 
-    if user_input is None:
-        return error("Username and Password are required.", 400)
+    if not isinstance(user_input, dict):
+        return error("Username and password are required.", 400)
 
     username = user_input.get("username")
     password = user_input.get("password")
+    if not isinstance(username, str) or not username.strip() or len(username.strip()) > 100 or not isinstance(password, str) or not password:
+        return error("Username and password are required.", 400)
 
-    get_user = login_services(username, password)
+    login_data = login_services(username.strip(), password)
 
-    if get_user is None:
+    if login_data is None:
         return error("Invalid username or password.", 401)
 
-    return success("Login successfully.", 200, get_user)
+    return success("Login successful.", 200, login_data)
 
 
 
