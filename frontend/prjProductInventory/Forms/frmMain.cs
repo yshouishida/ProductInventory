@@ -16,5 +16,25 @@ namespace prjProductInventory
         {
             InitializeComponent();
         }
+
+        private void btnNew_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

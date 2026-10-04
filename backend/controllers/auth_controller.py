@@ -7,17 +7,17 @@ def login_control():
     user_input = request.get_json(silent=True)
 
     if not isinstance(user_input, dict):
-        return error("Username and password are required.", 400)
+        return error("Email and password are required.", 400)
 
-    username = user_input.get("username")
+    email = user_input.get("email")
     password = user_input.get("password")
-    if not isinstance(username, str) or not username.strip() or len(username.strip()) > 100 or not isinstance(password, str) or not password:
-        return error("Username and password are required.", 400)
+    if not isinstance(email, str) or not email.strip() or len(email.strip()) > 100 or not isinstance(password, str) or not password:
+        return error("email and password are required.", 400)
 
-    login_data = login_services(username.strip(), password)
+    login_data = login_services(email.strip(), password)
 
     if login_data is None:
-        return error("Invalid username or password.", 401)
+        return error("Invalid email or password.", 401)
 
     return success("Login successful.", 200, login_data)
 

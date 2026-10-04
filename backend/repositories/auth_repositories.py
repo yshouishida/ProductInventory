@@ -1,6 +1,6 @@
 from backend.database.connection import get_connection
 
-def login_repo(username):
+def login_repo(email):
     conn = None
 
     try:
@@ -10,15 +10,17 @@ def login_repo(username):
             cursor.execute(
                 """
                 SELECT 
-                    id,
-                    username,
-                    password,
-                    role
-                FROM tblUsers
-                WHERE username = %s
+                    u.id,
+                    u.email,
+                    u.password,
+                    r.name as role
+                FROM tblUser u
+                INNER JOIN tblRole r
+                    ON u.role_id = r.id
+                WHERE email = %s
                 LIMIT 1
                 """,
-                (username,)
+                (email,)
             )
             return cursor.fetchone()
         

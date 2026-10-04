@@ -17,7 +17,7 @@ def get_products_repo():
                     description,
                     qty,
                     price
-                FROM tblProducts
+                FROM tblProduct
                 """
             )
             return cursor.fetchall()
@@ -41,7 +41,7 @@ def get_by_id_repo(id):
                     description,
                     qty,
                     price
-                FROM tblProducts
+                FROM tblProduct
                 WHERE id = %s
                 """,
                 (id,)
@@ -60,7 +60,7 @@ def add_product_repo(code, name, description, qty, price):
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO tblProducts
+                INSERT INTO tblProduct
                     (code, name, description, qty, price)
                 VALUES
                     (%s, %s, %s, %s, %s)
@@ -88,7 +88,7 @@ def update_product_repo(code, name, description, qty, price, id):
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id FROM tblProducts WHERE id = %s
+                SELECT id FROM tblProduct WHERE id = %s
                 """,
                 (id,)
             )
@@ -97,7 +97,7 @@ def update_product_repo(code, name, description, qty, price, id):
 
             cursor.execute(
                 """
-                UPDATE tblProducts
+                UPDATE tblProduct
                 SET
                     code        = %s, 
                     name        = %s, 
@@ -135,7 +135,7 @@ def delete_product_repo(id):
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT id FROM tblProducts WHERE id = %s
+                SELECT id FROM tblProduct WHERE id = %s
                 """,
                 (id,)
             )
@@ -144,7 +144,7 @@ def delete_product_repo(id):
 
             cursor.execute(
                 """
-                DELETE FROM tblProducts WHERE id = %s
+                DELETE FROM tblProduct WHERE id = %s
                 """,
                 (id,)
             )
