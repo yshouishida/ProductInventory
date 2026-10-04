@@ -20,7 +20,13 @@ def get_products_repo():
                 FROM tblProduct
                 """
             )
-            return cursor.fetchall()
+            products = cursor.fetchall()
+
+            for product in products:
+                if product:
+                    product["price"] = float(product["price"])
+
+            return products
         
     finally:
         if conn: conn.close()
@@ -46,7 +52,12 @@ def get_by_id_repo(id):
                 """,
                 (id,)
             )
-            return cursor.fetchone()
+            product = cursor.fetchone()
+            if product:
+                product["price"] = float(product["price"])
+
+
+            return product
         
     finally:
         if conn: conn.close()
